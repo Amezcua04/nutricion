@@ -1,4 +1,4 @@
-# Etapa 1: Node para compilar assets
+# Etapa 1: Construcción de assets con Node.js
 FROM node:18-alpine as node
 
 WORKDIR /app
@@ -13,17 +13,15 @@ COPY postcss.config.* ./
 
 RUN npm run build
 
-# Etapa 2: PHP con Composer y servidor
+# Etapa 2: PHP con Laravel
 FROM php:8.2-fpm-alpine
 
-# Instalar dependencias del sistema
+# Dependencias del sistema
 RUN apk add --no-cache \
     bash \
     curl \
-    libpng \
     libpng-dev \
     libjpeg-turbo-dev \
-    libwebp-dev \
     freetype-dev \
     zip \
     unzip \
@@ -40,34 +38,32 @@ RUN apk add --no-cache \
     nginx \
     supervisor
 
-# Instalar extensiones de PHP necesarias
+# Extensiones de PHP necesarias
 RUN docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath intl gd
 
 # Instalar Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Crear directorio del proyecto
+# Directorio de la app
 WORKDIR /var/www
 
-# Copiar código fuente
+# Copiar proyecto completo
 COPY . .
 
 # Copiar los assets compilados desde la etapa Node
 COPY --from=node /app/public/build public/build
 
-# Instalar dependencias de PHP
+# Instalar dependencias Laravel (sin dev)
 RUN composer install --no-dev --optimize-autoloader
 
-# Permisos
+# Generar la key si no existe
+RUN php artisan key:generate || true
+
+# Asegurar permisos correctos
 RUN chown -R www-data:www-data /var/www
 
-# Variables de entorno (puedes sobreescribirlas en Render)
-ENV APP_ENV=production
-ENV APP_DEBUG=false
-ENV APP_KEY=base64:dummy
-
-# Puerto para Render
+# Puerto expuesto para Railway / Render
 EXPOSE 8000
 
-# Comando de arranque
-CMD php artisan serve --host=0.0.0.0 --port=8000
+# Comando de arranque: migrar y servir
+CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000
