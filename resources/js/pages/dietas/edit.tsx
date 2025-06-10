@@ -60,7 +60,7 @@ export default function EditDieta({ dieta, insumos, tiposComida, costosPorTipo }
   }, {} as Record<number, Detalle[]>);
 
   const handleDelete = (id: number) => {
-    router.delete(`/detalle-dieta/${id}`, {
+    router.delete(`/detalleDieta/${id}`, {
       preserveScroll: true,
       onSuccess: () => router.reload({ only: ['dieta', 'costosPorTipo'] })
     });

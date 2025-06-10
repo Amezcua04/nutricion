@@ -22,7 +22,7 @@ export default function AddInsumoForm({ dietaId, tipoComidaId, insumos }: Props)
     dieta_id: dietaId,
     tipo_comida_id: tipoComidaId,
     insumo_id: '',
-    cantidad: '',
+    cantidad: '1',
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -33,7 +33,7 @@ export default function AddInsumoForm({ dietaId, tipoComidaId, insumos }: Props)
       onSuccess: () => {
         toast.success('Insumo agregado');
         setData('insumo_id', '');
-        setData('cantidad', '');
+        setData('cantidad', '1');
       },
       onError: () => {
         toast.error('Error al agregar el insumo');
@@ -67,11 +67,11 @@ export default function AddInsumoForm({ dietaId, tipoComidaId, insumos }: Props)
         <Label htmlFor="cantidad">Cantidad</Label>
         <Input
           type="number"
-          step="0.10"
+          step="1"
           min="0"
           value={data.cantidad}
           onChange={(e) => setData('cantidad', e.target.value)}
-          placeholder="Ej: 1.5"
+          placeholder="Ej: 1"
         />
         {errors.cantidad && <p className="text-sm text-red-500">{errors.cantidad}</p>}
       </div>

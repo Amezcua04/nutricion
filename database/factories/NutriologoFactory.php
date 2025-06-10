@@ -18,8 +18,8 @@ class NutriologoFactory extends Factory
     public function definition(): array
     {
         return [
-            'nombre' => $this->faker->name,
-            'user_id' => User::inRandomOrder()->first()->id ?? User::factory(),
+            'nombre' => "Elena Navarro",
+            'user_id' => User::first()->id ?? User::factory(),
         ];
     }
 }
