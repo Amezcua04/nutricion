@@ -13,6 +13,6 @@ class NutriologoSeeder extends Seeder
      */
     public function run(): void
     {
-        Nutriologo::factory()->count(2)->create();
+        Nutriologo::factory()->count(1)->create();
     }
 }

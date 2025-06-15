@@ -15,10 +15,10 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             UsuariosSeeder::class,
-            NutriologoSeeder::class,
+            // NutriologoSeeder::class,
             // PacienteSeeder::class,
             // InsumoSeeder::class,
-            TiposComidaSeeder::class,
+            // TiposComidaSeeder::class,
             // DietaSeeder::class,
             // DetalleDietaSeeder::class,
         ]);
