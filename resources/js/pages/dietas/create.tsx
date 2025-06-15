@@ -38,9 +38,10 @@ interface Props {
 }
 
 export default function CreateDieta({ pacientes, nutriologos }: Props) {
+    const today = new Date().toISOString().split('T')[0];
     const { data, setData, post, processing, errors } = useForm({
         paciente_id: '',
-        fecha: '',
+        fecha: today,
         nutriologo_id: '',
     });
 
