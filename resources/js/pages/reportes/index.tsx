@@ -9,6 +9,7 @@ import React, { useState } from 'react';
 interface ReporteItem {
   id: number;
   nombre: string;
+  numero_habitacion: string;
   total_dietas: number;
   total_inversion: number;
   desde: string;
@@ -104,6 +105,7 @@ export default function ReportesIndex({ reporte, fecha_inicio, fecha_fin }: Prop
                 <thead>
                   <tr className="text-left border-b">
                     <th className="p-2">Paciente</th>
+                    <th className="p-2">Habitación</th>
                     <th className="p-2">Desde</th>
                     <th className="p-2">Hasta</th>
                     <th className="p-2"># Dietas</th>
@@ -121,6 +123,7 @@ export default function ReportesIndex({ reporte, fecha_inicio, fecha_fin }: Prop
                     reporte.map((r) => (
                       <tr key={r.id} className="border-b">
                         <td className="p-2 font-medium">{r.nombre}</td>
+                        <td className="p-2">{r.numero_habitacion}</td>
                         <td className="p-2">{r.desde}</td>
                         <td className="p-2">{r.hasta}</td>
                         <td className="p-2">{r.total_dietas}</td>

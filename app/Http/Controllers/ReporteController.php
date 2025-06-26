@@ -39,7 +39,7 @@ class ReporteController extends Controller
             'fecha_fin' => $fechaFin,
         ]);
 
-        return $pdf->download('reporte_inversion.pdf');
+        return $pdf->stream('reporte_inversion.pdf');
     }
 
     public function exportExcel(Request $request)
@@ -55,18 +55,20 @@ class ReporteController extends Controller
     private function getReporteData($fechaInicio, $fechaFin)
     {
         return DB::table('pacientes')
+            ->join('habitaciones', 'habitaciones.id', '=', 'pacientes.habitacion_id')
             ->join('dietas', 'dietas.paciente_id', '=', 'pacientes.id')
             ->join('detalle_dietas', 'detalle_dietas.dieta_id', '=', 'dietas.id')
             ->join('insumos', 'detalle_dietas.insumo_id', '=', 'insumos.id')
             ->select(
                 'pacientes.nombre',
+                'habitaciones.numero as habitacion',
                 DB::raw('COUNT(DISTINCT dietas.id) as total_dietas'),
                 DB::raw('SUM(insumos.costo_unitario * detalle_dietas.cantidad) as total_inversion'),
                 DB::raw('MIN(dietas.fecha) as desde'),
                 DB::raw('MAX(dietas.fecha) as hasta')
             )
             ->whereBetween('dietas.fecha', [$fechaInicio, $fechaFin])
-            ->groupBy('pacientes.nombre')
+            ->groupBy('pacientes.nombre', 'habitaciones.numero')
             ->orderBy('pacientes.nombre')
             ->get();
     }

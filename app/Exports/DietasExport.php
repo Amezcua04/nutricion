@@ -5,11 +5,14 @@ namespace App\Exports;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithStyles;
+use Maatwebsite\Excel\Concerns\WithColumnFormatting;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-class DietasExport implements FromCollection, WithHeadings
+class DietasExport implements FromCollection, WithHeadings, WithStyles, WithColumnFormatting
 {
     private $dietas;
-    private $fileName = 'dietas.xlsx';
 
     public function __construct($dietas)
     {
@@ -21,7 +24,6 @@ class DietasExport implements FromCollection, WithHeadings
         $rows = collect();
 
         foreach ($this->dietas as $dieta) {
-            // Agrupar los detalles por tipo de comida
             $agrupados = $dieta->detalle->groupBy(fn($d) => $d->tipoComida->nombre);
 
             foreach ($agrupados as $tipoNombre => $detalles) {
@@ -30,18 +32,18 @@ class DietasExport implements FromCollection, WithHeadings
                     $subtotal = $detalle->cantidad * $detalle->insumo->costo_unitario;
 
                     $rows->push([
-                        'Fecha' => $dieta->fecha,
-                        'Paciente' => $dieta->paciente->nombre,
-                        'Nutriólogo' => $dieta->nutriologo->nombre,
-                        'Tipo de comida' => $first ? $tipoNombre : '', // Solo en la primera fila
-                        'Insumo' => $detalle->insumo->nombre,
-                        'Cantidad' => $detalle->cantidad,
-                        'Unidad' => $detalle->insumo->unidad,
-                        'Costo Unitario' => number_format($detalle->insumo->costo_unitario, 2),
-                        'Subtotal' => number_format($subtotal, 2),
+                        $first ? ($dieta->fecha) : '',
+                        $first ? ($dieta->paciente->nombre) : '',
+                        $first ? ($dieta->paciente->habitacion->numero ?? '—') : '',
+                        $first ? ($dieta->nutriologo->nombre) : '',
+                        $first ? $tipoNombre : '',
+                        $detalle->insumo->nombre,
+                        $detalle->cantidad,
+                        $detalle->insumo->costo_unitario,
+                        $subtotal,
                     ]);
 
-                    $first = false; // Las siguientes filas no repiten el nombre del tipo
+                    $first = false;
                 }
             }
         }
@@ -49,19 +51,35 @@ class DietasExport implements FromCollection, WithHeadings
         return $rows;
     }
 
-
     public function headings(): array
     {
         return [
             'Fecha',
             'Paciente',
+            'Habitación',
             'Nutriólogo',
             'Tipo de comida',
             'Insumo',
             'Cantidad',
-            'Unidad',
             'Costo Unitario',
             'Subtotal',
+        ];
+    }
+
+    public function styles(Worksheet $sheet)
+    {
+        return [
+            1 => ['font' => ['bold' => true]],
+        ];
+    }
+
+    public function columnFormats(): array
+    {
+        return [
+            'A' => NumberFormat::FORMAT_DATE_DDMMYYYY,
+            'G' => NumberFormat::FORMAT_NUMBER_00,
+            'H' => NumberFormat::FORMAT_CURRENCY_USD_SIMPLE,
+            'I' => NumberFormat::FORMAT_CURRENCY_USD_SIMPLE, 
         ];
     }
 }

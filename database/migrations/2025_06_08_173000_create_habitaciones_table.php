@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pacientes', function (Blueprint $table) {
+        Schema::create('habitaciones', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre', 100);
-            $table->foreignId('habitacion_id')->constrained('habitaciones');
-            $table->date('fecha_ingreso');
-            $table->date('fecha_egreso')->nullable();
+            $table->string('numero', 10)->unique();
+            $table->decimal('costo_noche', 8, 2);
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pacientes');
+        Schema::dropIfExists('habitaciones');
     }
 };

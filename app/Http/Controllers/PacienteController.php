@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Habitacion;
 use App\Models\Paciente;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -11,21 +12,42 @@ class PacienteController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $pacientes = Paciente::latest()->paginate(8);
+        $search = $request->input('search');
+        $sort = $request->input('sort', 'created_at');
+        $direction = $request->input('direction', 'desc');
+
+        $pacientes = Paciente::with('habitacion')
+            ->when($search, function ($query, $search) {
+                $query->where('nombre', 'like', "%{$search}%")
+                    ->orWhereHas('habitacion', function ($q) use ($search) {
+                        $q->where('numero', 'like', "%{$search}%");
+                    });
+            })
+            ->orderBy($sort, $direction)
+            ->paginate(6)
+            ->withQueryString();
 
         return Inertia::render('pacientes/index', [
-            'pacientes' => $pacientes
+            'pacientes' => $pacientes,
+            'filters' => [
+                'search' => $search,
+                'sort' => $sort,
+                'direction' => $direction,
+            ],
         ]);
     }
+
 
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        return Inertia::render('pacientes/create');
+        return Inertia::render('pacientes/create', [
+            'habitaciones' => Habitacion::select('id', 'numero', 'costo_noche')->get(),
+        ]);
     }
 
     /**
@@ -35,7 +57,7 @@ class PacienteController extends Controller
     {
         $validated = $request->validate([
             'nombre' => 'required|string|max:100',
-            'numero_habitacion' => 'required|string|max:10',
+            'habitacion_id' => 'required|exists:habitaciones,id',
             'fecha_ingreso' => 'required|date',
         ]);
 
@@ -58,7 +80,8 @@ class PacienteController extends Controller
     public function edit(Paciente $paciente)
     {
         return Inertia::render('pacientes/edit', [
-            'paciente' => $paciente
+            'paciente' => $paciente->load('habitacion'),
+            'habitaciones' => Habitacion::select('id', 'numero', 'costo_noche')->get(),
         ]);
     }
 
@@ -69,9 +92,9 @@ class PacienteController extends Controller
     {
         $validated = $request->validate([
             'nombre' => 'required|string|max:100',
-            'numero_habitacion' => 'required|string|max:10',
+            'habitacion_id' => 'required|exists:habitaciones,id',
             'fecha_ingreso' => 'required|date',
-            'fecha_egreso' => 'nullable|date|after_or_equal:fecha_ingreso'
+            'fecha_egreso' => 'nullable|date|after_or_equal:fecha_ingreso',
         ]);
 
         $paciente->update($validated);

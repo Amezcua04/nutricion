@@ -19,14 +19,52 @@ class DietaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $dietas = Dieta::with(['paciente', 'nutriologo'])->latest()->paginate(8);
+        $search = $request->input('search');
+        $sort = $request->input('sort', 'fecha');
+        $direction = $request->input('direction', 'desc');
+
+        $dietas = Dieta::with(['paciente.habitacion', 'nutriologo'])
+            ->when($search, function ($query, $search) {
+                $query->whereHas('paciente', function ($q) use ($search) {
+                    $q->where('nombre', 'like', "%{$search}%");
+                })->orWhereHas('nutriologo', function ($q) use ($search) {
+                    $q->where('nombre', 'like', "%{$search}%");
+                });
+            })
+            ->when(in_array($sort, ['fecha']), fn($q) => $q->orderBy($sort, $direction))
+            ->when(
+                $sort === 'paciente',
+                fn($q) =>
+                $q->join('pacientes', 'dietas.paciente_id', '=', 'pacientes.id')
+                    ->orderBy('pacientes.nombre', $direction)
+                    ->select('dietas.*')
+            )
+            ->when(
+                $sort === 'nutriologo',
+                fn($q) =>
+                $q->join('nutriologos', 'dietas.nutriologo_id', '=', 'nutriologos.id')
+                    ->orderBy('nutriologos.nombre', $direction)
+                    ->select('dietas.*')
+            )
+            ->when(
+                $sort === 'numero_habitacion',
+                fn($q) =>
+                $q->join('pacientes', 'dietas.paciente_id', '=', 'pacientes.id')
+                    ->join('habitaciones', 'pacientes.habitacion_id', '=', 'habitaciones.id')
+                    ->orderBy('habitaciones.numero', $direction)
+                    ->select('dietas.*')
+            )
+            ->paginate(8)
+            ->withQueryString();
 
         return Inertia::render('dietas/index', [
             'dietas' => $dietas,
+            'filters' => $request->only(['search', 'sort', 'direction']),
         ]);
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -122,16 +160,16 @@ class DietaController extends Controller
 
     public function exportPdf()
     {
-        $dietas = Dieta::with(['paciente', 'nutriologo', 'detalle.tipoComida', 'detalle.insumo'])->get();
+        $dietas = Dieta::with(['paciente.habitacion', 'nutriologo', 'detalle.tipoComida', 'detalle.insumo'])->get();
 
         $pdf = Pdf::loadView('dietas.pdf', ['dietas' => $dietas]);
 
-        return $pdf->download('dietas.pdf');
+        return $pdf->stream('dietas.pdf');
     }
 
     public function exportExcel()
     {
-        $dietas = Dieta::with(['paciente', 'nutriologo', 'detalle.tipoComida', 'detalle.insumo'])->get();
+        $dietas = Dieta::with(['paciente.habitacion', 'nutriologo', 'detalle.tipoComida', 'detalle.insumo'])->get();
 
         return Excel::download(new DietasExport($dietas), 'dietas.xlsx');
     }

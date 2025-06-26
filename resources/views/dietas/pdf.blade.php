@@ -18,6 +18,7 @@
   @foreach ($dietas as $dieta)
     <div class="section">
       <strong>Paciente:</strong> {{ $dieta->paciente->nombre }} <br>
+      <strong>Habitación:</strong> {{ $dieta->paciente->habitacion->numero ?? 'N/A' }} <br>
       <strong>Nutriólogo:</strong> {{ $dieta->nutriologo->nombre }} <br>
       <strong>Fecha:</strong> {{ $dieta->fecha }}
 
@@ -27,7 +28,6 @@
             <th>Tipo de Comida</th>
             <th>Insumo</th>
             <th>Cantidad</th>
-            <th>Unidad</th>
             <th>Costo Unitario</th>
             <th>Subtotal</th>
           </tr>
@@ -49,7 +49,6 @@
                 <td>{{ $first ? $tipoNombre : '' }}</td>
                 <td>{{ $detalle->insumo->nombre }}</td>
                 <td>{{ $detalle->cantidad }}</td>
-                <td>{{ $detalle->insumo->unidad }}</td>
                 <td>${{ number_format($detalle->insumo->costo_unitario, 2) }}</td>
                 <td>${{ number_format($subtotal, 2) }}</td>
               </tr>
@@ -58,7 +57,7 @@
           @endforeach
 
           <tr>
-            <td colspan="5" style="text-align: right;"><strong>Total:</strong></td>
+            <td colspan="4" style="text-align: right;"><strong>Total:</strong></td>
             <td><strong>${{ number_format($total, 2) }}</strong></td>
           </tr>
         </tbody>

@@ -9,22 +9,21 @@ import { ArrowLeftIcon } from 'lucide-react';
 import React from 'react';
 import { toast } from 'sonner';
 
-
 const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Pacientes',
-        href: '/pacientes',
-    },
-    {
-        title: 'Crear',
-        href: '/pacientes/create',
-    },
+  { title: 'Pacientes', href: '/pacientes' },
+  { title: 'Crear', href: '/pacientes/create' },
 ];
 
-export default function CreatePaciente() {
+interface Habitacion {
+  id: number;
+  numero: string;
+  costo_noche: string;
+}
+
+export default function CreatePaciente({ habitaciones }: { habitaciones: Habitacion[] }) {
   const { data, setData, post, processing, errors } = useForm({
     nombre: '',
-    numero_habitacion: '',
+    habitacion_id: '',
     fecha_ingreso: '',
   });
 
@@ -69,16 +68,23 @@ export default function CreatePaciente() {
                   {errors.nombre && <p className="text-sm text-red-500">{errors.nombre}</p>}
                 </div>
                 <div className="flex flex-1 flex-col space-y-2">
-                  <Label htmlFor="numero_habitacion">Habitación <span className="text-red-500">*</span></Label>
-                  <Input
-                    id="numero_habitacion"
-                    name="numero_habitacion"
-                    type="text"
+                  <Label htmlFor="habitacion_id">Habitación <span className="text-red-500">*</span></Label>
+                  <select
+                    id="habitacion_id"
+                    name="habitacion_id"
                     required
-                    value={data.numero_habitacion}
-                    onChange={(e) => setData('numero_habitacion', e.target.value)}
-                  />
-                  {errors.numero_habitacion && <p className="text-sm text-red-500">{errors.numero_habitacion}</p>}
+                    value={data.habitacion_id}
+                    onChange={(e) => setData('habitacion_id', e.target.value)}
+                    className="border rounded-md px-3 py-2"
+                  >
+                    <option value="">Selecciona una habitación</option>
+                    {habitaciones.map((habitacion) => (
+                      <option key={habitacion.id} value={habitacion.id}>
+                        {habitacion.numero} — ${habitacion.costo_noche}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.habitacion_id && <p className="text-sm text-red-500">{errors.habitacion_id}</p>}
                 </div>
               </div>
               <div className="flex flex-col md:flex-row gap-6">

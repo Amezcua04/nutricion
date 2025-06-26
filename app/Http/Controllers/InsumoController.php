@@ -11,14 +11,26 @@ class InsumoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $insumos = Insumo::latest()->paginate(8);
+        $search = $request->input('search');
+        $sort = $request->input('sort', 'created_at');
+        $direction = $request->input('direction', 'desc');
+
+        $insumos = Insumo::when($search, function ($query, $search) {
+            $query->where('nombre', 'like', "%{$search}%")
+                ->orWhere('unidad', 'like', "%{$search}%");
+        })
+            ->orderBy($sort, $direction)
+            ->paginate(8)
+            ->withQueryString();
 
         return Inertia::render('insumos/index', [
-            'insumos' => $insumos
+            'insumos' => $insumos,
+            'filters' => $request->only(['search', 'sort', 'direction']),
         ]);
     }
+
 
     /**
      * Show the form for creating a new resource.

@@ -20,18 +20,24 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
+interface Habitacion {
+    id: number;
+    numero: string;
+    costo_noche: string;
+}
+
 interface Paciente {
     id: number;
     nombre: string;
-    numero_habitacion: string;
+    habitacion: Habitacion;
     fecha_ingreso: string;
     fecha_egreso?: string | null;
 }
 
-export default function EditPaciente({ paciente }: { paciente: Paciente }) {
+export default function EditPaciente({ paciente, habitaciones }: { paciente: Paciente, habitaciones: Habitacion[] }) {
     const { data, setData, put, processing, errors } = useForm({
         nombre: paciente.nombre,
-        numero_habitacion: paciente.numero_habitacion,
+        habitacion_id: paciente.habitacion?.id || '',
         fecha_ingreso: paciente.fecha_ingreso,
         fecha_egreso: paciente.fecha_egreso ?? '',
     });
@@ -77,16 +83,27 @@ export default function EditPaciente({ paciente }: { paciente: Paciente }) {
                                     {errors.nombre && <p className="text-sm text-red-500">{errors.nombre}</p>}
                                 </div>
                                 <div className="flex flex-1 flex-col space-y-2">
-                                    <Label htmlFor="numero_habitacion">Habitación <span className="text-red-500">*</span></Label>
-                                    <Input
-                                        id="numero_habitacion"
-                                        name="numero_habitacion"
-                                        type="text"
+                                    <Label htmlFor="habitacion_id">
+                                        Habitación <span className="text-red-500">*</span>
+                                    </Label>
+                                    <select
+                                        id="habitacion_id"
+                                        name="habitacion_id"
                                         required
-                                        value={data.numero_habitacion}
-                                        onChange={(e) => setData('numero_habitacion', e.target.value)}
-                                    />
-                                    {errors.numero_habitacion && <p className="text-sm text-red-500">{errors.numero_habitacion}</p>}
+                                        value={data.habitacion_id}
+                                        onChange={(e) => setData('habitacion_id', e.target.value)}
+                                        className="border rounded-md px-3 py-2"
+                                    >
+                                        <option value="">Selecciona una habitación</option>
+                                        {habitaciones.map((habitacion) => (
+                                            <option key={habitacion.id} value={habitacion.id}>
+                                                {habitacion.numero} — ${habitacion.costo_noche}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    {errors.habitacion_id && (
+                                        <p className="text-sm text-red-500">{errors.habitacion_id}</p>
+                                    )}
                                 </div>
                             </div>
                             <div className="flex flex-col md:flex-row gap-6">

@@ -21,4 +21,9 @@ class Paciente extends Model
     {
         return $this->hasMany(Dieta::class);
     }
+
+    public function habitacion()
+    {
+        return $this->belongsTo(Habitacion::class);
+    }
 }
