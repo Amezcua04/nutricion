@@ -31,7 +31,7 @@ export default function CreateInsumo() {
     e.preventDefault();
     post('/insumos', {
       onSuccess: () => {
-        toast.success('Insumo creado con éxito');
+        toast.success('Paciente creado con éxito');
       },
     });
   };

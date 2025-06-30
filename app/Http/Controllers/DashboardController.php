@@ -41,7 +41,7 @@ class DashboardController extends Controller
             )
             ->groupBy('dietas.fecha')
             ->orderBy('dietas.fecha')
-            ->limit(10)
+            ->limit(30)
             ->get();
         $maximo = $grafica->max('total');
 
