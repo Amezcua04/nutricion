@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('habitaciones', function (Blueprint $table) {
             $table->id();
-            $table->string('numero', 10)->unique();
+            $table->string('numero', 10);
             $table->decimal('costo_noche', 8, 2);
             $table->timestamps();
         });
