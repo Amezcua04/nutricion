@@ -31,7 +31,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function ReportesIndex({ reporte, fecha_inicio, fecha_fin }: Props) {
-  console.log("🚀 ~ ReportesIndex ~ reporte:", reporte)
   const [fInicio, setFInicio] = useState(fecha_inicio);
   const [fFin, setFFin] = useState(fecha_fin);
 
