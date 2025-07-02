@@ -58,17 +58,49 @@ class ReporteController extends Controller
             ->join('habitaciones', 'habitaciones.id', '=', 'pacientes.habitacion_id')
             ->join('dietas', 'dietas.paciente_id', '=', 'pacientes.id')
             ->join('detalle_dietas', 'detalle_dietas.dieta_id', '=', 'dietas.id')
-            ->join('insumos', 'detalle_dietas.insumo_id', '=', 'insumos.id')
+            ->join('insumos', 'insumos.id', '=', 'detalle_dietas.insumo_id')
             ->select(
                 'pacientes.nombre',
                 'habitaciones.numero as habitacion',
-                DB::raw('COUNT(DISTINCT dietas.id) as total_dietas'),
-                DB::raw('SUM(insumos.costo_unitario * detalle_dietas.cantidad) as total_inversion'),
-                DB::raw('MIN(dietas.fecha) as desde'),
-                DB::raw('MAX(dietas.fecha) as hasta')
+                'habitaciones.costo_noche as costo',
+                DB::raw("
+            CASE
+                WHEN DATEDIFF(pacientes.fecha_egreso, pacientes.fecha_ingreso) = 0 THEN 1
+                ELSE DATEDIFF(pacientes.fecha_egreso, pacientes.fecha_ingreso)
+            END as estancia
+        "),
+                DB::raw("
+            TRUNCATE(
+                habitaciones.costo_noche *
+                CASE
+                    WHEN DATEDIFF(pacientes.fecha_egreso, pacientes.fecha_ingreso) = 0 THEN 1
+                    ELSE DATEDIFF(pacientes.fecha_egreso, pacientes.fecha_ingreso)
+                END
+            , 2) as costo_estancia
+        "),
+                DB::raw("
+                TRUNCATE(
+                SUM(insumos.costo_unitario * detalle_dietas.cantidad)
+                , 2)  as total_alimentos"),
+                DB::raw("
+            TRUNCATE(
+                (habitaciones.costo_noche *
+                    CASE
+                        WHEN DATEDIFF(pacientes.fecha_egreso, pacientes.fecha_ingreso) = 0 THEN 1
+                        ELSE DATEDIFF(pacientes.fecha_egreso, pacientes.fecha_ingreso)
+                    END
+                ) - SUM(insumos.costo_unitario * detalle_dietas.cantidad)
+            , 2) as diferencia
+        ")
             )
             ->whereBetween('dietas.fecha', [$fechaInicio, $fechaFin])
-            ->groupBy('pacientes.nombre', 'habitaciones.numero')
+            ->groupBy(
+                'pacientes.nombre',
+                'habitaciones.numero',
+                'habitaciones.costo_noche',
+                'pacientes.fecha_egreso',
+                'pacientes.fecha_ingreso'
+            )
             ->orderBy('pacientes.nombre')
             ->get();
     }

@@ -9,11 +9,12 @@ import React, { useState } from 'react';
 interface ReporteItem {
   id: number;
   nombre: string;
-  numero_habitacion: string;
-  total_dietas: number;
-  total_inversion: number;
-  desde: string;
-  hasta: string;
+  habitacion: string;
+  costo: number;
+  estancia: number;
+  costo_estancia: number;
+  total_alimentos: number;
+  diferencia: number;
 }
 
 interface Props {
@@ -30,6 +31,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function ReportesIndex({ reporte, fecha_inicio, fecha_fin }: Props) {
+  console.log("🚀 ~ ReportesIndex ~ reporte:", reporte)
   const [fInicio, setFInicio] = useState(fecha_inicio);
   const [fFin, setFFin] = useState(fecha_fin);
 
@@ -106,10 +108,11 @@ export default function ReportesIndex({ reporte, fecha_inicio, fecha_fin }: Prop
                   <tr className="text-left border-b">
                     <th className="p-2">Paciente</th>
                     <th className="p-2">Habitación</th>
-                    <th className="p-2">Desde</th>
-                    <th className="p-2">Hasta</th>
-                    <th className="p-2"># Dietas</th>
-                    <th className="p-2">Total Inversión (MXN)</th>
+                    <th className="p-2">Costo</th>
+                    <th className="p-2">Estancia</th>
+                    <th className="p-2">Costo Estancia</th>
+                    <th className="p-2">Total Alimentos</th>
+                    <th className="p-2">Diferencia</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -123,11 +126,12 @@ export default function ReportesIndex({ reporte, fecha_inicio, fecha_fin }: Prop
                     reporte.map((r) => (
                       <tr key={r.id} className="border-b">
                         <td className="p-2 font-medium">{r.nombre}</td>
-                        <td className="p-2">{r.numero_habitacion}</td>
-                        <td className="p-2">{r.desde}</td>
-                        <td className="p-2">{r.hasta}</td>
-                        <td className="p-2">{r.total_dietas}</td>
-                        <td className="p-2">${Number(r.total_inversion).toFixed(2)}</td>
+                        <td className="p-2">{r.habitacion}</td>
+                        <td className="p-2">$ {r.costo}</td>
+                        <td className="p-2">{r.estancia} {r.estancia > 1 ? 'días' : 'día'}</td>
+                        <td className="p-2">$ {r.costo_estancia}</td>
+                        <td className="p-2">$ {r.total_alimentos}</td>
+                        <td className="p-2">$ {r.diferencia}</td>
                       </tr>
                     ))
                   )}

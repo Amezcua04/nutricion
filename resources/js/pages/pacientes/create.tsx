@@ -26,6 +26,7 @@ export default function CreatePaciente({ habitaciones }: { habitaciones: Habitac
     habitacion_id: '',
     fecha_ingreso: '',
   });
+  console.log("🚀 ~ CreatePaciente ~ data:", data)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

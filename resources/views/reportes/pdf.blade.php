@@ -20,10 +20,11 @@
             <tr>
                 <th>Paciente</th>
                 <th>Habitación</th>
-                <th>Desde</th>
-                <th>Hasta</th>
-                <th># Dietas</th>
-                <th>Total Inversión (MXN)</th>
+                <th>Costo</th>
+                <th>Estancia</th>
+                <th>Costo Estancia</th>
+                <th>Total Alimentos</th>
+                <th>Diferencia</th>
             </tr>
         </thead>
         <tbody>
@@ -31,10 +32,11 @@
             <tr>
                 <td>{{ $r->nombre }}</td>
                 <td>{{ $r->habitacion }}</td>
-                <td>{{ $r->desde }}</td>
-                <td>{{ $r->hasta }}</td>
-                <td>{{ $r->total_dietas }}</td>
-                <td>${{ number_format($r->total_inversion, 2) }}</td>
+                <td>{{ $r->costo }}</td>
+                <td>{{ $r->estancia }}</td>
+                <td>{{ $r->costo_estancia }}</td>
+                <td>{{ $r->total_alimentos }}</td>
+                <td>{{ $r->diferencia }}</td>
             </tr>
             @endforeach
         </tbody>

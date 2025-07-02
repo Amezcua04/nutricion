@@ -21,17 +21,18 @@ class InversionExport implements FromCollection, WithHeadings
             return [
                 $item->nombre,
                 $item->habitacion,
-                $item->desde,
-                $item->hasta,
-                $item->total_dietas,
-                number_format($item->total_inversion, 2),
+                $item->costo,
+                $item->estancia,
+                $item->costo_estancia,
+                $item->total_alimentos,
+                $item->diferencia
             ];
         });
     }
 
     public function headings(): array
     {
-        return ['Paciente', 'Habitación', 'Desde', 'Hasta', 'N° Dietas', 'Total Inversión (MXN)'];
+        return ['Paciente', 'Habitación', 'Costo', 'Estancia', 'Costo Estancia', 'Total Alimentos', 'Diferencia'];
     }
 }
 
