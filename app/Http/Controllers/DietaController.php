@@ -72,7 +72,9 @@ class DietaController extends Controller
     public function create()
     {
         return Inertia::render('dietas/create', [
-            'pacientes' => Paciente::select('id', 'nombre')->get(),
+            'pacientes' => Paciente::select('id', 'nombre', 'created_at')
+            ->orderBy('created_at', 'desc',)
+            ->get(),
             'nutriologos' => Nutriologo::select('id', 'nombre')->get(),
         ]);
     }
