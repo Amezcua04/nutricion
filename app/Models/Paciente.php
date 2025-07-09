@@ -13,6 +13,7 @@ class Paciente extends Model
     protected $fillable = [
         'nombre',
         'habitacion_id',
+        'tipo_estancia',
         'fecha_ingreso',
         'fecha_egreso',
     ];

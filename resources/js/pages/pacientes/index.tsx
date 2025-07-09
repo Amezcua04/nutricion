@@ -26,6 +26,7 @@ interface Paciente {
   habitacion: Habitacion;
   fecha_ingreso: string;
   fecha_egreso?: string | null;
+  tipo_estancia?: string | null;
 }
 
 interface PaginationLink {
@@ -144,6 +145,9 @@ export default function Pacientes({
                     <TableHead className="cursor-pointer select-none" onClick={() => handleSort('habitacion')}>
                       Habitación {getSortIcon('habitacion')}
                     </TableHead>
+                    <TableHead className="cursor-pointer select-none" onClick={() => handleSort('tipo_estancia')}>
+                      Estancia {getSortIcon('tipo_estancia')}
+                    </TableHead>
                     <TableHead className="cursor-pointer select-none" onClick={() => handleSort('fecha_ingreso')}>
                       Ingreso {getSortIcon('fecha_ingreso')}
                     </TableHead>
@@ -167,6 +171,7 @@ export default function Pacientes({
                         <TableCell>{paciente.nombre}</TableCell>
                         {/* <TableCell>{paciente.habitacion?.numero} - ${paciente.habitacion?.costo_noche}</TableCell> */}
                         <TableCell>{paciente.habitacion?.numero}</TableCell>
+                        <TableCell>{paciente.tipo_estancia}</TableCell>
                         <TableCell>{paciente.fecha_ingreso}</TableCell>
                         <TableCell>{paciente.fecha_egreso ?? '—'}</TableCell>
                         <TableCell>

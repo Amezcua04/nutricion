@@ -25,8 +25,8 @@ export default function CreatePaciente({ habitaciones }: { habitaciones: Habitac
     nombre: '',
     habitacion_id: '',
     fecha_ingreso: '',
+    tipo_estancia: ''
   });
-  console.log("🚀 ~ CreatePaciente ~ data:", data)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -100,6 +100,23 @@ export default function CreatePaciente({ habitaciones }: { habitaciones: Habitac
                     onChange={(e) => setData('fecha_ingreso', e.target.value)}
                   />
                   {errors.fecha_ingreso && <p className="text-sm text-red-500">{errors.fecha_ingreso}</p>}
+                </div>
+
+                <div className="flex flex-1 flex-col space-y-2">
+                  <Label htmlFor="tipo_estancia">Tipo de estancia</Label>
+                  <select
+                    id="tipo_estancia"
+                    required
+                    name="tipo_estancia"
+                    value={data.tipo_estancia}
+                    onChange={(e) => setData('tipo_estancia', e.target.value)}
+                    className="border rounded-md px-3 py-2"
+                  >
+                    <option value="">Selecciona una opción</option>
+                    <option value="particular">Particular</option>
+                    <option value="aseguradora">Aseguradora</option>
+                  </select>
+                  {errors.tipo_estancia && <p className="text-sm text-red-500">{errors.tipo_estancia}</p>}
                 </div>
               </div>
               <div className="flex justify-end">

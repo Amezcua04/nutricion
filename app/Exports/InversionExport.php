@@ -20,6 +20,7 @@ class InversionExport implements FromCollection, WithHeadings
         return collect($this->data)->map(function ($item) {
             return [
                 $item->nombre,
+                $item->tipo,
                 $item->habitacion,
                 $item->costo,
                 $item->estancia,
@@ -32,7 +33,7 @@ class InversionExport implements FromCollection, WithHeadings
 
     public function headings(): array
     {
-        return ['Paciente', 'Habitación', 'Costo', 'Estancia', 'Costo Estancia', 'Total Alimentos', 'Diferencia'];
+        return ['Paciente', 'Tipo', 'Habitación', 'Costo', 'Estancia', 'Costo Estancia', 'Total Alimentos', 'Diferencia'];
     }
 }
 

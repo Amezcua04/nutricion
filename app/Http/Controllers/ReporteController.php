@@ -61,6 +61,7 @@ class ReporteController extends Controller
             ->join('insumos', 'insumos.id', '=', 'detalle_dietas.insumo_id')
             ->select(
                 'pacientes.nombre',
+                'pacientes.tipo_estancia as tipo',
                 'habitaciones.numero as habitacion',
                 'habitaciones.costo_noche as costo',
                 DB::raw("
@@ -96,6 +97,7 @@ class ReporteController extends Controller
             ->whereBetween('dietas.fecha', [$fechaInicio, $fechaFin])
             ->groupBy(
                 'pacientes.nombre',
+                'pacientes.tipo_estancia',
                 'habitaciones.numero',
                 'habitaciones.costo_noche',
                 'pacientes.fecha_egreso',

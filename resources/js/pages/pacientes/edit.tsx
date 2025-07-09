@@ -1,3 +1,5 @@
+// EditPaciente.tsx
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -32,14 +34,22 @@ interface Paciente {
     habitacion: Habitacion;
     fecha_ingreso: string;
     fecha_egreso?: string | null;
+    tipo_estancia: 'particular' | 'aseguradora';
 }
 
-export default function EditPaciente({ paciente, habitaciones }: { paciente: Paciente, habitaciones: Habitacion[] }) {
+export default function EditPaciente({
+    paciente,
+    habitaciones,
+}: {
+    paciente: Paciente;
+    habitaciones: Habitacion[];
+}) {
     const { data, setData, put, processing, errors } = useForm({
         nombre: paciente.nombre,
         habitacion_id: paciente.habitacion?.id || '',
         fecha_ingreso: paciente.fecha_ingreso,
         fecha_egreso: paciente.fecha_egreso ?? '',
+        tipo_estancia: paciente.tipo_estancia || '',
     });
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -71,7 +81,9 @@ export default function EditPaciente({ paciente, habitaciones }: { paciente: Pac
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="flex flex-col md:flex-row gap-6">
                                 <div className="flex flex-1 flex-col space-y-2">
-                                    <Label htmlFor="nombre">Nombre completo <span className="text-red-500">*</span></Label>
+                                    <Label htmlFor="nombre">
+                                        Nombre completo <span className="text-red-500">*</span>
+                                    </Label>
                                     <Input
                                         id="nombre"
                                         name="nombre"
@@ -106,9 +118,12 @@ export default function EditPaciente({ paciente, habitaciones }: { paciente: Pac
                                     )}
                                 </div>
                             </div>
+
                             <div className="flex flex-col md:flex-row gap-6">
                                 <div className="flex flex-1 flex-col space-y-2">
-                                    <Label htmlFor="fecha_ingreso">Fecha de ingreso <span className="text-red-500">*</span></Label>
+                                    <Label htmlFor="fecha_ingreso">
+                                        Fecha de ingreso <span className="text-red-500">*</span>
+                                    </Label>
                                     <Input
                                         id="fecha_ingreso"
                                         name="fecha_ingreso"
@@ -117,7 +132,9 @@ export default function EditPaciente({ paciente, habitaciones }: { paciente: Pac
                                         value={data.fecha_ingreso}
                                         onChange={(e) => setData('fecha_ingreso', e.target.value)}
                                     />
-                                    {errors.fecha_ingreso && <p className="text-sm text-red-500">{errors.fecha_ingreso}</p>}
+                                    {errors.fecha_ingreso && (
+                                        <p className="text-sm text-red-500">{errors.fecha_ingreso}</p>
+                                    )}
                                 </div>
                                 <div className="flex flex-1 flex-col space-y-2">
                                     <Label htmlFor="fecha_egreso">Fecha de egreso</Label>
@@ -128,9 +145,31 @@ export default function EditPaciente({ paciente, habitaciones }: { paciente: Pac
                                         value={data.fecha_egreso}
                                         onChange={(e) => setData('fecha_egreso', e.target.value)}
                                     />
-                                    {errors.fecha_egreso && <p className="text-sm text-red-500">{errors.fecha_egreso}</p>}
+                                    {errors.fecha_egreso && (
+                                        <p className="text-sm text-red-500">{errors.fecha_egreso}</p>
+                                    )}
                                 </div>
                             </div>
+
+                            <div className="flex flex-1 flex-col space-y-2">
+                                <Label htmlFor="tipo_estancia">Tipo de estancia</Label>
+                                <select
+                                    id="tipo_estancia"
+                                    required
+                                    name="tipo_estancia"
+                                    value={data.tipo_estancia}
+                                    onChange={(e) =>
+                                        setData('tipo_estancia', e.target.value as 'particular' | 'aseguradora')
+                                    }
+                                    className="border rounded-md px-3 py-2"
+                                >
+                                    <option value="">Selecciona una opción</option>
+                                    <option value="particular">Particular</option>
+                                    <option value="aseguradora">Aseguradora</option>
+                                </select>
+                                {errors.tipo_estancia && <p className="text-sm text-red-500">{errors.tipo_estancia}</p>}
+                            </div>
+
                             <div className="flex justify-end">
                                 <Button type="submit" disabled={processing} className="cursor-pointer">
                                     {processing ? 'Guardando...' : 'Actualizar'}

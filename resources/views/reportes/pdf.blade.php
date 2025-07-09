@@ -19,6 +19,7 @@
         <thead>
             <tr>
                 <th>Paciente</th>
+                <th>Tipo Estancia</th>
                 <th>Habitación</th>
                 <th>Costo</th>
                 <th>Estancia</th>
@@ -31,6 +32,7 @@
             @foreach ($reporte as $r)
             <tr>
                 <td>{{ $r->nombre }}</td>
+                <td>{{ $r->tipo }}</td>
                 <td>{{ $r->habitacion }}</td>
                 <td>{{ $r->costo }}</td>
                 <td>{{ $r->estancia }}</td>

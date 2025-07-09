@@ -59,6 +59,7 @@ class PacienteController extends Controller
             'nombre' => 'required|string|max:100',
             'habitacion_id' => 'required|exists:habitaciones,id',
             'fecha_ingreso' => 'required|date',
+            'tipo_estancia' => 'nullable|in:particular,aseguradora'
         ]);
 
         Paciente::create($validated);
@@ -95,6 +96,7 @@ class PacienteController extends Controller
             'habitacion_id' => 'required|exists:habitaciones,id',
             'fecha_ingreso' => 'required|date',
             'fecha_egreso' => 'nullable|date|after_or_equal:fecha_ingreso',
+            'tipo_estancia' => 'nullable|in:particular,aseguradora'
         ]);
 
         $paciente->update($validated);
